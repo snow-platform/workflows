@@ -1,0 +1,23 @@
+name: default-check-dotnet.yml
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: ${{ inputs.version }}
+      - name: restore
+        run: dotnet restore
+      - name: build
+        run: dotnet build --no-restore --configuration Release
+      - name: test
+        run: dotnet test --no-build --coverage --verbosity normal
