@@ -1,7 +1,7 @@
 name: default-check-dotnet.yml
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       version:
         type: string
