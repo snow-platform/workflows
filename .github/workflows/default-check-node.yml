@@ -17,8 +17,8 @@ jobs:
           cache: npm
       - name: install dependencies
         run: npm ci
-      - name: eslint
-        run: npm run eslint --if-present
+      - name: lint
+        run: npm run lint --if-present
       - name: test
         run: npm run test --if-present
       - name: build
