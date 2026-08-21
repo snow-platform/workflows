@@ -3,7 +3,7 @@ name: tag-check
 on:
   workflow_call:
     outputs:
-      tag: ${{ steps.tag.outputs.tag }}
+      tag: ${{ jobs.tag.outputs.tag }}
 
 jobs:
   tag:
