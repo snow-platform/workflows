@@ -4,13 +4,13 @@ on:
   workflow_call:
     outputs:
       tag:
-        value: ${{ case(startsWith(github.ref, 'refs/heads/'), jobs.tag.tag_head.tag, startsWith(github.ref, 'refs/tags/'), jobs.tag.tag_tag.tag, 'UNKNOWN') }}
+        value: ${{ jobs.tag.outputs.tag }}
 
 jobs:
   tag:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.tag.outputs.tag }}
+      tag: ${{ case(startsWith(github.ref, 'refs/heads/'), steps.tag_head.outputs.tag, startsWith(github.ref, 'refs/tags/'), steps.tag_tag.outputs.tag, '') }}
     steps:
       - uses: actions/checkout@v6
         if: ${{ startsWith(github.ref, 'refs/heads/') }}
