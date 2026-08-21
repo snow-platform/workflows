@@ -1,0 +1,39 @@
+name: tag-check
+
+on:
+  workflow_call:
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-tags: true
+      - name: latest tag
+        id: tag
+        run: |
+          tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "::notice title=Tag:: $tag"
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+  tag_check:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-tags: true
+      - name: check release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.tag.outputs.tag }}
+        run: |
+          if gh release view $TAG; then
+            echo "::error::The release $TAG already exists"
+            exit 0
+          fi
