@@ -12,12 +12,25 @@ jobs:
       tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v6
+        if: ${{ startsWith(github.ref, 'refs/heads/') }}
         with:
           fetch-tags: true
-      - name: latest tag
+      - name: latest tag heads
+        if: ${{ startsWith(github.ref, 'refs/heads/') }}
         id: tag
         run: |
           tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          
+          echo "::notice title=Tag:: $tag"
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+      - name: latest tag tags
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        id: tag
+        env:
+          TAG: ${{ github.event.ref }}
+        run: |
+          tag=${TAG#refs/tags/}
+          
           echo "::notice title=Tag:: $tag"
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
